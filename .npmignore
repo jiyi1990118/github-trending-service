@@ -1,0 +1,23 @@
+# Source files
+src/
+tsconfig.json
+
+# Test files
+test-*.mjs
+*.test.js
+*.spec.js
+
+# Documentation
+TESTING.md
+FEATURE_ANALYSIS.md
+SUMMARY.md
+TEST_REPORT.md
+NPX_GUIDE.md
+
+# Build artifacts
+node_modules/
+*.log
+.DS_Store
+
+# Development files
+setup.sh
