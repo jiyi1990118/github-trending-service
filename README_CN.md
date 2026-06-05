@@ -5,7 +5,7 @@
 [![npm version](https://img.shields.io/npm/v/@npm_xiyuan/github-trending-mcp.svg)](https://www.npmjs.com/package/@npm_xiyuan/github-trending-mcp)
 [![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org)
 [![MCP](https://img.shields.io/badge/MCP-1.0-orange.svg)](https://modelcontextprotocol.io)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](./nodejs/LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
 一个基于 Model Context Protocol (MCP) 的服务器，为 AI 应用（如 Claude Code）提供实时访问 GitHub 热门仓库和开发者数据的能力。
 
@@ -295,8 +295,8 @@ npm update -g @npm_xiyuan/github-trending-mcp
 
 ```bash
 # 克隆项目
-git clone https://github.com/yourusername/github-trending-service.git
-cd github-trending-service/nodejs
+git clone https://github.com/jiyi1990118/github-trending-service.git
+cd github-trending-service
 
 # 安装依赖
 npm install
@@ -339,10 +339,11 @@ nodejs/
 
 ## 📄 许可证
 
-本项目基于 MIT 许可证开源 - 查看 [LICENSE](./nodejs/LICENSE) 文件了解详情。
+本项目基于 MIT 许可证开源 - 查看 [LICENSE](./LICENSE) 文件了解详情。
 
 ## 🔗 相关链接
 
+- [GitHub 仓库](https://github.com/jiyi1990118/github-trending-service)
 - [npm 包地址](https://www.npmjs.com/package/@npm_xiyuan/github-trending-mcp)
 - [Model Context Protocol 文档](https://modelcontextprotocol.io)
 - [Claude Desktop 下载](https://claude.ai/download)
