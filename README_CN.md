@@ -459,8 +459,8 @@ npm update -g @npm_xiyuan/github-trending-mcp
 
 ```bash
 # 克隆项目
-git clone https://github.com/jiyi1990118/github-trending-service.git
-cd github-trending-service
+git clone https://github.com/jiyi1990118/github-trending-mcp.git
+cd github-trending-mcp
 
 # 安装依赖
 npm install
@@ -507,7 +507,7 @@ nodejs/
 
 ## 🔗 相关链接
 
-- [GitHub 仓库](https://github.com/jiyi1990118/github-trending-service)
+- [GitHub 仓库](https://github.com/jiyi1990118/github-trending-mcp)
 - [npm 包地址](https://www.npmjs.com/package/@npm_xiyuan/github-trending-mcp)
 - [Model Context Protocol 文档](https://modelcontextprotocol.io)
 - [Claude Desktop 下载](https://claude.ai/download)

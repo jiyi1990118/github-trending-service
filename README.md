@@ -459,8 +459,8 @@ npm update -g @npm_xiyuan/github-trending-mcp
 
 ```bash
 # Clone the repository
-git clone https://github.com/jiyi1990118/github-trending-service.git
-cd github-trending-service
+git clone https://github.com/jiyi1990118/github-trending-mcp.git
+cd github-trending-mcp
 
 # Install dependencies
 npm install
@@ -507,7 +507,7 @@ This project is licensed under the MIT License - see the [LICENSE](./LICENSE) fi
 
 ## 🔗 Related Links
 
-- [GitHub Repository](https://github.com/jiyi1990118/github-trending-service)
+- [GitHub Repository](https://github.com/jiyi1990118/github-trending-mcp)
 - [npm Package](https://www.npmjs.com/package/@npm_xiyuan/github-trending-mcp)
 - [Model Context Protocol Documentation](https://modelcontextprotocol.io)
 - [Claude Desktop Download](https://claude.ai/download)
