@@ -1,11 +1,11 @@
 {
-  "name": "@npm_xiyuan/github-trending-mcp",
+  "name": "@npm_xiyuan/mcp-github-trending",
   "version": "1.1.1",
   "description": "MCP server for GitHub trending repositories and developers",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
-    "github-trending-mcp": "dist/index.js"
+    "mcp-github-trending": "dist/index.js"
   },
   "scripts": {
     "build": "tsc",
@@ -23,7 +23,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jiyi1990118/github-trending-mcp.git"
+    "url": "https://github.com/jiyi1990118/mcp-github-trending.git"
   },
   "files": [
     "dist",

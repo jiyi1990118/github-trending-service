@@ -2,7 +2,7 @@
 
 # GitHub Trending MCP Server
 
-[![npm version](https://img.shields.io/npm/v/@npm_xiyuan/github-trending-mcp.svg)](https://www.npmjs.com/package/@npm_xiyuan/github-trending-mcp)
+[![npm version](https://img.shields.io/npm/v/@npm_xiyuan/mcp-github-trending.svg)](https://www.npmjs.com/package/@npm_xiyuan/mcp-github-trending)
 [![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org)
 [![MCP](https://img.shields.io/badge/MCP-1.0-orange.svg)](https://modelcontextprotocol.io)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
@@ -31,13 +31,13 @@
 使用 npm 全局安装：
 
 ```bash
-npm install -g @npm_xiyuan/github-trending-mcp
+npm install -g @npm_xiyuan/mcp-github-trending
 ```
 
 或使用 npx 直接运行（推荐）：
 
 ```bash
-npx @npm_xiyuan/github-trending-mcp
+npx @npm_xiyuan/mcp-github-trending
 ```
 
 ## ⚙️ Claude Code 配置
@@ -61,7 +61,7 @@ npx @npm_xiyuan/github-trending-mcp
   "mcpServers": {
     "github-trending": {
       "command": "npx",
-      "args": ["-y", "@npm_xiyuan/github-trending-mcp"]
+      "args": ["-y", "@npm_xiyuan/mcp-github-trending"]
     }
   }
 }
@@ -73,7 +73,7 @@ npx @npm_xiyuan/github-trending-mcp
 - **command**: 使用 `npx` 确保始终运行最新版本
 - **args**: 
   - `-y`: 自动确认安装，避免交互式提示
-  - 包名: `@npm_xiyuan/github-trending-mcp`
+  - 包名: `@npm_xiyuan/mcp-github-trending`
 
 ### 验证配置
 
@@ -437,7 +437,7 @@ A: 请检查：
 1. 配置文件路径是否正确
 2. JSON 格式是否有效（使用 JSON 验证器检查）
 3. 是否已重启 Claude 客户端
-4. 使用 `npx -y @npm_xiyuan/github-trending-mcp` 确保包可正常运行
+4. 使用 `npx -y @npm_xiyuan/mcp-github-trending` 确保包可正常运行
 
 **Q: 返回数据为空或不完整？**
 
@@ -450,7 +450,7 @@ A: 可能原因：
 
 A: 使用 npx 会自动使用最新版本。如果全局安装，运行：
 ```bash
-npm update -g @npm_xiyuan/github-trending-mcp
+npm update -g @npm_xiyuan/mcp-github-trending
 ```
 
 ## 🛠️ 开发指南
@@ -459,8 +459,8 @@ npm update -g @npm_xiyuan/github-trending-mcp
 
 ```bash
 # 克隆项目
-git clone https://github.com/jiyi1990118/github-trending-mcp.git
-cd github-trending-mcp
+git clone https://github.com/jiyi1990118/mcp-github-trending.git
+cd mcp-github-trending
 
 # 安装依赖
 npm install
@@ -507,8 +507,8 @@ nodejs/
 
 ## 🔗 相关链接
 
-- [GitHub 仓库](https://github.com/jiyi1990118/github-trending-mcp)
-- [npm 包地址](https://www.npmjs.com/package/@npm_xiyuan/github-trending-mcp)
+- [GitHub 仓库](https://github.com/jiyi1990118/mcp-github-trending)
+- [npm 包地址](https://www.npmjs.com/package/@npm_xiyuan/mcp-github-trending)
 - [Model Context Protocol 文档](https://modelcontextprotocol.io)
 - [Claude Desktop 下载](https://claude.ai/download)
 - [GitHub Trending 页面](https://github.com/trending)

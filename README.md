@@ -2,7 +2,7 @@ English | [简体中文](./README_CN.md)
 
 # GitHub Trending MCP Server
 
-[![npm version](https://img.shields.io/npm/v/@npm_xiyuan/github-trending-mcp.svg)](https://www.npmjs.com/package/@npm_xiyuan/github-trending-mcp)
+[![npm version](https://img.shields.io/npm/v/@npm_xiyuan/mcp-github-trending.svg)](https://www.npmjs.com/package/@npm_xiyuan/mcp-github-trending)
 [![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org)
 [![MCP](https://img.shields.io/badge/MCP-1.0-orange.svg)](https://modelcontextprotocol.io)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](./nodejs/LICENSE)
@@ -31,13 +31,13 @@ A Model Context Protocol (MCP) server that provides AI applications (like Claude
 Install globally via npm:
 
 ```bash
-npm install -g @npm_xiyuan/github-trending-mcp
+npm install -g @npm_xiyuan/mcp-github-trending
 ```
 
 Or run directly with npx (recommended):
 
 ```bash
-npx @npm_xiyuan/github-trending-mcp
+npx @npm_xiyuan/mcp-github-trending
 ```
 
 ## ⚙️ Claude Code Configuration
@@ -61,7 +61,7 @@ Edit the configuration file and add the MCP server configuration:
   "mcpServers": {
     "github-trending": {
       "command": "npx",
-      "args": ["-y", "@npm_xiyuan/github-trending-mcp"]
+      "args": ["-y", "@npm_xiyuan/mcp-github-trending"]
     }
   }
 }
@@ -73,7 +73,7 @@ Edit the configuration file and add the MCP server configuration:
 - **command**: Use `npx` to ensure always running the latest version
 - **args**: 
   - `-y`: Auto-confirm installation to avoid interactive prompts
-  - Package name: `@npm_xiyuan/github-trending-mcp`
+  - Package name: `@npm_xiyuan/mcp-github-trending`
 
 ### Verify Configuration
 
@@ -437,7 +437,7 @@ A: Please check:
 1. Configuration file path is correct
 2. JSON format is valid (use JSON validator)
 3. Claude client has been restarted
-4. Run `npx -y @npm_xiyuan/github-trending-mcp` to ensure package works
+4. Run `npx -y @npm_xiyuan/mcp-github-trending` to ensure package works
 
 **Q: Empty or incomplete data returned?**
 
@@ -450,7 +450,7 @@ A: Possible reasons:
 
 A: Using npx automatically uses the latest version. If globally installed, run:
 ```bash
-npm update -g @npm_xiyuan/github-trending-mcp
+npm update -g @npm_xiyuan/mcp-github-trending
 ```
 
 ## 🛠️ Development Guide
@@ -459,8 +459,8 @@ npm update -g @npm_xiyuan/github-trending-mcp
 
 ```bash
 # Clone the repository
-git clone https://github.com/jiyi1990118/github-trending-mcp.git
-cd github-trending-mcp
+git clone https://github.com/jiyi1990118/mcp-github-trending.git
+cd mcp-github-trending
 
 # Install dependencies
 npm install
@@ -507,8 +507,8 @@ This project is licensed under the MIT License - see the [LICENSE](./LICENSE) fi
 
 ## 🔗 Related Links
 
-- [GitHub Repository](https://github.com/jiyi1990118/github-trending-mcp)
-- [npm Package](https://www.npmjs.com/package/@npm_xiyuan/github-trending-mcp)
+- [GitHub Repository](https://github.com/jiyi1990118/mcp-github-trending)
+- [npm Package](https://www.npmjs.com/package/@npm_xiyuan/mcp-github-trending)
 - [Model Context Protocol Documentation](https://modelcontextprotocol.io)
 - [Claude Desktop Download](https://claude.ai/download)
 - [GitHub Trending Page](https://github.com/trending)
