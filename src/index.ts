@@ -7,6 +7,13 @@ import {
 } from '@modelcontextprotocol/sdk/types.js';
 import fetch from 'node-fetch';
 import * as cheerio from 'cheerio';
+import {
+  fetchRepoReadme,
+  fetchRepoFile,
+  fetchRepoStructure,
+  fetchRepoCommits,
+  analyzeRepo
+} from './github-api.js';
 
 interface TrendingRepo {
   name: string;
@@ -250,6 +257,69 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           },
           required: ['owner', 'repo']
         }
+      },
+      {
+        name: 'analyze_repo',
+        description: '分析GitHub项目，获取README、依赖、结构和最近提交的完整报告',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            owner: { type: 'string', description: '仓库所有者' },
+            repo: { type: 'string', description: '仓库名称' }
+          },
+          required: ['owner', 'repo']
+        }
+      },
+      {
+        name: 'get_repo_readme',
+        description: '获取GitHub仓库的README.md原始内容',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            owner: { type: 'string', description: '仓库所有者' },
+            repo: { type: 'string', description: '仓库名称' }
+          },
+          required: ['owner', 'repo']
+        }
+      },
+      {
+        name: 'get_repo_file',
+        description: '获取GitHub仓库中指定文件的内容',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            owner: { type: 'string', description: '仓库所有者' },
+            repo: { type: 'string', description: '仓库名称' },
+            path: { type: 'string', description: '文件路径' }
+          },
+          required: ['owner', 'repo', 'path']
+        }
+      },
+      {
+        name: 'get_repo_structure',
+        description: '获取GitHub仓库的目录结构',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            owner: { type: 'string', description: '仓库所有者' },
+            repo: { type: 'string', description: '仓库名称' },
+            path: { type: 'string', description: '目录路径（可选）', default: '' }
+          },
+          required: ['owner', 'repo']
+        }
+      },
+      {
+        name: 'get_repo_commits',
+        description: '获取GitHub仓库的最近提交历史',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            owner: { type: 'string', description: '仓库所有者' },
+            repo: { type: 'string', description: '仓库名称' },
+            limit: { type: 'number', description: '返回数量', default: 10 }
+          },
+          required: ['owner', 'repo']
+        }
       }
     ]
   };
@@ -334,6 +404,61 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         }
       ]
     };
+  }
+
+  if (request.params.name === 'analyze_repo') {
+    const { owner, repo } = request.params.arguments as {
+      owner: string;
+      repo: string;
+    };
+
+    try {
+      const result = await analyzeRepo(owner, repo, fetchRepoDetails);
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(result, null, 2)
+          }
+        ]
+      };
+    } catch (error: any) {
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify({
+              error: error.message,
+              hint: '请检查仓库名称是否正确，或稍后重试'
+            }, null, 2)
+          }
+        ]
+      };
+    }
+  }
+
+  if (request.params.name === 'get_repo_readme') {
+    const { owner, repo } = request.params.arguments as { owner: string; repo: string };
+    const readme = await fetchRepoReadme(owner, repo);
+    return { content: [{ type: 'text', text: readme }] };
+  }
+
+  if (request.params.name === 'get_repo_file') {
+    const { owner, repo, path } = request.params.arguments as { owner: string; repo: string; path: string };
+    const content = await fetchRepoFile(owner, repo, path);
+    return { content: [{ type: 'text', text: content }] };
+  }
+
+  if (request.params.name === 'get_repo_structure') {
+    const { owner, repo, path = '' } = request.params.arguments as { owner: string; repo: string; path?: string };
+    const structure = await fetchRepoStructure(owner, repo, path);
+    return { content: [{ type: 'text', text: JSON.stringify(structure, null, 2) }] };
+  }
+
+  if (request.params.name === 'get_repo_commits') {
+    const { owner, repo, limit = 10 } = request.params.arguments as { owner: string; repo: string; limit?: number };
+    const commits = await fetchRepoCommits(owner, repo, limit);
+    return { content: [{ type: 'text', text: JSON.stringify(commits, null, 2) }] };
   }
 
   throw new Error(`Unknown tool: ${request.params.name}`);

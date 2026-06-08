@@ -84,7 +84,7 @@ After restarting Claude client, verify the configuration is successful by:
 
 ## 📦 MCP Tools Capabilities
 
-This service provides 4 MCP tools that can be directly called in Claude Code:
+This service provides 9 MCP tools that can be directly called in Claude Code:
 
 ### 1. get_trending_repos - Get Trending Repositories
 
@@ -202,6 +202,115 @@ This service provides 4 MCP tools that can be directly called in Claude Code:
 - Evaluate project activity and popularity
 - Get project tech stack and topic tags
 
+### 5. analyze_repo - Comprehensive Repository Analysis
+
+**Description**: Get a complete analysis report of a GitHub project in one call, including README, dependencies, directory structure, and recent commits. This is the most powerful and convenient analysis tool for quickly understanding unfamiliar projects.
+
+**Parameters**:
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `owner` | string | **Yes** | Repository owner (username or organization) |
+| `repo` | string | **Yes** | Repository name |
+
+**Response Data**:
+```json
+{
+  "basic": {
+    "fullName": "owner/repo",
+    "stars": 12345,
+    "language": "TypeScript",
+    "topics": ["react", "typescript"]
+  },
+  "readme": {
+    "content": "# Project Title\n...",
+    "size": 5432
+  },
+  "structure": {
+    "rootFiles": ["package.json", "README.md"],
+    "directories": ["src", "test", "docs"]
+  },
+  "dependencies": {
+    "detected": true,
+    "packageManager": "npm/yarn/pnpm",
+    "file": "package.json",
+    "content": "{...}"
+  },
+  "recentActivity": {
+    "commits": [...],
+    "lastCommitDate": "2024-06-05"
+  }
+}
+```
+
+**Use Cases**:
+- Quickly understand an unfamiliar project's purpose and tech stack
+- Evaluate project activity and maintenance status
+- Get complete technical background information about a project
+
+### 6. get_repo_readme - Get README
+
+**Description**: Fetch the raw README.md content of a GitHub repository.
+
+**Parameters**:
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `owner` | string | **Yes** | Repository owner |
+| `repo` | string | **Yes** | Repository name |
+
+**Use Cases**:
+- Read project documentation to understand usage
+- Extract project introduction and feature descriptions
+
+### 7. get_repo_file - Get File Content
+
+**Description**: Fetch the raw content of a specific file in a GitHub repository.
+
+**Parameters**:
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `owner` | string | **Yes** | Repository owner |
+| `repo` | string | **Yes** | Repository name |
+| `path` | string | **Yes** | File path, e.g., "package.json" |
+
+**Use Cases**:
+- View configuration files (package.json, requirements.txt)
+- Read code files to understand implementation details
+
+### 8. get_repo_structure - Get Directory Structure
+
+**Description**: Fetch the directory and file listing of a GitHub repository.
+
+**Parameters**:
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `owner` | string | **Yes** | - | Repository owner |
+| `repo` | string | **Yes** | - | Repository name |
+| `path` | string | No | `""` | Directory path (empty for root) |
+
+**Use Cases**:
+- Understand project file organization
+- Browse files in specific directories
+
+### 9. get_repo_commits - Get Commit History
+
+**Description**: Fetch recent commit records of a GitHub repository.
+
+**Parameters**:
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `owner` | string | **Yes** | - | Repository owner |
+| `repo` | string | **Yes** | - | Repository name |
+| `limit` | number | No | `10` | Number of commits to return |
+
+**Use Cases**:
+- Understand recent development activity
+- Check project commit frequency and activity level
+
 ## 💡 Usage Examples
 
 ### Example 1: View Today's Trending Projects
@@ -237,6 +346,61 @@ Show me detailed information about microsoft/vscode repository
 ```
 
 Claude will call `get_repo_details` to get complete information including stars, forks, tech stack, etc.
+
+### Example 5: Analyze a GitHub Project
+
+```
+Help me analyze the project at https://github.com/microsoft/vscode
+```
+
+Claude will call the `analyze_repo` tool to return a comprehensive analysis report including:
+- Basic project information (stars, language, topic tags)
+- README content
+- Project structure (root files and main directories)
+- Dependency management (package.json or other config files)
+- Recent commit history
+
+This is the most powerful and convenient way to quickly understand an unfamiliar project.
+
+### Example 6: View Trending Developers
+
+```
+Show me this week's trending Python developers on GitHub
+```
+
+Claude will call the `get_trending_developers` tool to return a list of the most active Python developers this week along with their popular repositories.
+
+### Example 7: Read Project README
+
+```
+Help me read the README documentation for facebook/react
+```
+
+Claude will call the `get_repo_readme` tool to fetch the complete README.md content of the React project, making it easy to understand the project's usage instructions and features.
+
+### Example 8: View Configuration Files
+
+```
+Help me check the package.json file of the vercel/next.js project
+```
+
+Claude will call the `get_repo_file` tool to fetch the package.json file content of the Next.js project, allowing you to understand the project's dependencies and script configurations.
+
+### Example 9: View Project Structure
+
+```
+Help me see the root directory structure of the nodejs/node project
+```
+
+Claude will call the `get_repo_structure` tool to return the root directory files and folders list of the Node.js project, helping you understand the project's organization architecture.
+
+### Example 10: View Commit History
+
+```
+Help me check the last 5 commit records of the denoland/deno project
+```
+
+Claude will call the `get_repo_commits` tool to return detailed information about the last 5 commits of the Deno project, including committer, commit time, and commit message.
 
 ## 🎯 Best Practices
 

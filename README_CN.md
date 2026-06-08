@@ -84,7 +84,7 @@ npx @npm_xiyuan/github-trending-mcp
 
 ## 📦 MCP 工具能力说明
 
-本服务提供 4 个 MCP 工具，可在 Claude Code 中直接调用：
+本服务提供 9 个 MCP 工具，可在 Claude Code 中直接调用：
 
 ### 1. get_trending_repos - 获取热门仓库
 
@@ -202,6 +202,115 @@ npx @npm_xiyuan/github-trending-mcp
 - 评估项目的活跃度和受欢迎程度
 - 获取项目的技术栈和主题标签
 
+### 5. analyze_repo - 项目综合分析
+
+**功能描述**: 一次性获取 GitHub 项目的完整分析报告，包括 README、依赖、目录结构和最近提交。这是最强大的分析工具，适合快速了解陌生项目。
+
+**参数说明**:
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `owner` | string | **是** | 仓库所有者 |
+| `repo` | string | **是** | 仓库名称 |
+
+**返回数据**:
+```json
+{
+  "basic": {
+    "fullName": "owner/repo",
+    "stars": 12345,
+    "language": "TypeScript",
+    "topics": ["react", "typescript"]
+  },
+  "readme": {
+    "content": "# Project Title\n...",
+    "size": 5432
+  },
+  "structure": {
+    "rootFiles": ["package.json", "README.md"],
+    "directories": ["src", "test", "docs"]
+  },
+  "dependencies": {
+    "detected": true,
+    "packageManager": "npm/yarn/pnpm",
+    "file": "package.json",
+    "content": "{...}"
+  },
+  "recentActivity": {
+    "commits": [...],
+    "lastCommitDate": "2024-06-05"
+  }
+}
+```
+
+**使用场景**:
+- 快速了解一个陌生项目的用途和技术栈
+- 评估项目的活跃度和维护状态
+- 获取项目完整的技术背景信息
+
+### 6. get_repo_readme - 获取 README
+
+**功能描述**: 获取 GitHub 仓库的 README.md 原始 Markdown 内容。
+
+**参数说明**:
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `owner` | string | **是** | 仓库所有者 |
+| `repo` | string | **是** | 仓库名称 |
+
+**使用场景**:
+- 阅读项目文档了解使用方法
+- 提取项目介绍和功能说明
+
+### 7. get_repo_file - 获取文件内容
+
+**功能描述**: 获取 GitHub 仓库中指定文件的原始内容。
+
+**参数说明**:
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `owner` | string | **是** | 仓库所有者 |
+| `repo` | string | **是** | 仓库名称 |
+| `path` | string | **是** | 文件路径，如 "package.json" |
+
+**使用场景**:
+- 查看配置文件（package.json, requirements.txt）
+- 读取代码文件了解实现细节
+
+### 8. get_repo_structure - 获取目录结构
+
+**功能描述**: 获取 GitHub 仓库的目录和文件列表。
+
+**参数说明**:
+
+| 参数 | 类型 | 必填 | 默认值 | 说明 |
+|------|------|------|--------|------|
+| `owner` | string | **是** | - | 仓库所有者 |
+| `repo` | string | **是** | - | 仓库名称 |
+| `path` | string | 否 | `""` | 目录路径（空为根目录） |
+
+**使用场景**:
+- 了解项目的文件组织结构
+- 浏览特定目录下的文件
+
+### 9. get_repo_commits - 获取提交历史
+
+**功能描述**: 获取 GitHub 仓库的最近提交记录。
+
+**参数说明**:
+
+| 参数 | 类型 | 必填 | 默认值 | 说明 |
+|------|------|------|--------|------|
+| `owner` | string | **是** | - | 仓库所有者 |
+| `repo` | string | **是** | - | 仓库名称 |
+| `limit` | number | 否 | `10` | 返回数量 |
+
+**使用场景**:
+- 了解项目的最近开发动态
+- 查看项目的提交频率和活跃度
+
 ## 💡 使用示例
 
 ### 示例 1：查看今日热门项目
@@ -237,6 +346,61 @@ Claude 会调用 `search_trending` 工具，在热门列表中搜索包含 "AI a
 ```
 
 Claude 会调用 `get_repo_details` 获取该仓库的 stars、forks、技术栈等完整信息。
+
+### 示例 5：分析 GitHub 项目
+
+```
+帮我分析一下 https://github.com/microsoft/vscode 这个项目
+```
+
+Claude 会调用 `analyze_repo` 工具，一次性返回项目的完整分析报告，包括：
+- 项目基本信息（stars、语言、主题标签）
+- README 内容
+- 项目结构（根目录文件和主要目录）
+- 依赖管理（package.json 等配置文件）
+- 最近的提交记录
+
+这是最强大和便捷的项目分析方式，适合快速了解陌生项目。
+
+### 示例 6：查看热门开发者
+
+```
+帮我看看本周 GitHub 上的热门 Python 开发者
+```
+
+Claude 会调用 `get_trending_developers` 工具，返回本周最活跃的 Python 开发者列表及其代表作品。
+
+### 示例 7：读取项目 README
+
+```
+帮我读取 facebook/react 的 README 文档
+```
+
+Claude 会调用 `get_repo_readme` 工具，获取 React 项目的完整 README.md 内容，方便了解项目的使用说明和功能介绍。
+
+### 示例 8：查看配置文件
+
+```
+帮我查看 vercel/next.js 项目的 package.json 文件
+```
+
+Claude 会调用 `get_repo_file` 工具，获取 Next.js 项目的 package.json 文件内容，可以了解项目的依赖和脚本配置。
+
+### 示例 9：查看项目结构
+
+```
+帮我看看 nodejs/node 项目的根目录结构
+```
+
+Claude 会调用 `get_repo_structure` 工具，返回 Node.js 项目的根目录文件和文件夹列表，帮助理解项目的组织架构。
+
+### 示例 10：查看提交历史
+
+```
+帮我查看 denoland/deno 项目最近5次提交记录
+```
+
+Claude 会调用 `get_repo_commits` 工具，返回 Deno 项目最近5次提交的详细信息，包括提交者、提交时间和提交说明。
 
 ## 🎯 最佳实践
 
