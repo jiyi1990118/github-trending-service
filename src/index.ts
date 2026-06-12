@@ -8,6 +8,9 @@ import {
 import fetch from 'node-fetch';
 import * as cheerio from 'cheerio';
 import {
+  clampLimit,
+  githubHeaders,
+  validateGitHubIdentifier,
   fetchRepoReadme,
   fetchRepoFile,
   fetchRepoStructure,
@@ -52,18 +55,24 @@ async function fetchTrending(
   language?: string,
   limit: number = 10
 ): Promise<TrendingRepo[]> {
+  const safeLimit = clampLimit(limit);
   let url = 'https://github.com/trending';
   if (language) {
-    url += `/${language}`;
+    url += `/${encodeURIComponent(language)}`;
   }
 
-  const response = await fetch(`${url}?since=${since}`);
+  const response = await fetch(`${url}?since=${since}`, {
+    headers: githubHeaders('text/html')
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to fetch GitHub trending repositories: ${response.status} ${response.statusText}`);
+  }
   const html = await response.text();
   const $ = cheerio.load(html);
 
   const repos: TrendingRepo[] = [];
   $('article.Box-row').each((i, element) => {
-    if (i >= limit) return false;
+    if (i >= safeLimit) return false;
 
     const $article = $(element);
     const $repoLink = $article.find('h2 a');
@@ -81,6 +90,10 @@ async function fetchTrending(
     }
   });
 
+  if (repos.length === 0) {
+    throw new Error('No trending repositories parsed; GitHub page structure may have changed or the request was blocked.');
+  }
+
   return repos;
 }
 
@@ -89,18 +102,24 @@ async function fetchTrendingDevelopers(
   language?: string,
   limit: number = 10
 ): Promise<TrendingDeveloper[]> {
+  const safeLimit = clampLimit(limit);
   let url = 'https://github.com/trending/developers';
   if (language) {
-    url += `/${language}`;
+    url += `/${encodeURIComponent(language)}`;
   }
 
-  const response = await fetch(`${url}?since=${since}`);
+  const response = await fetch(`${url}?since=${since}`, {
+    headers: githubHeaders('text/html')
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to fetch GitHub trending developers: ${response.status} ${response.statusText}`);
+  }
   const html = await response.text();
   const $ = cheerio.load(html);
 
   const developers: TrendingDeveloper[] = [];
   $('article.Box-row').each((i, element) => {
-    if (i >= limit) return false;
+    if (i >= safeLimit) return false;
 
     const $article = $(element);
     const $userLink = $article.find('h1 a');
@@ -123,12 +142,23 @@ async function fetchTrendingDevelopers(
     }
   });
 
+  if (developers.length === 0) {
+    throw new Error('No trending developers parsed; GitHub page structure may have changed or the request was blocked.');
+  }
+
   return developers;
 }
 
 async function fetchRepoDetails(owner: string, repo: string): Promise<RepoDetails> {
-  const url = `https://github.com/${owner}/${repo}`;
-  const response = await fetch(url);
+  const safeOwner = validateGitHubIdentifier(owner, 'owner');
+  const safeRepo = validateGitHubIdentifier(repo, 'repo');
+  const url = `https://github.com/${safeOwner}/${safeRepo}`;
+  const response = await fetch(url, {
+    headers: githubHeaders('text/html')
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to fetch repository details for ${owner}/${repo}: ${response.status} ${response.statusText}`);
+  }
   const html = await response.text();
   const $ = cheerio.load(html);
 
@@ -155,7 +185,7 @@ async function fetchRepoDetails(owner: string, repo: string): Promise<RepoDetail
 const server = new Server(
   {
     name: 'github-trending',
-    version: '1.0.0',
+    version: '1.1.1',
   },
   {
     capabilities: {
@@ -185,7 +215,9 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
               description: '编程语言（可选）'
             },
             limit: {
-              type: 'number',
+              type: 'integer',
+              minimum: 1,
+              maximum: 50,
               description: '返回数量',
               default: 10
             }
@@ -209,7 +241,9 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
               description: '编程语言（可选）'
             },
             limit: {
-              type: 'number',
+              type: 'integer',
+              minimum: 1,
+              maximum: 50,
               description: '返回数量',
               default: 10
             }
@@ -327,7 +361,8 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
 
 // 处理工具调用
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
-  if (request.params.name === 'get_trending_repos') {
+  try {
+    if (request.params.name === 'get_trending_repos') {
     const { since = 'weekly', language, limit = 10 } = request.params.arguments as {
       since?: string;
       language?: string;
@@ -462,6 +497,15 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   }
 
   throw new Error(`Unknown tool: ${request.params.name}`);
+  } catch (error: any) {
+    return {
+      isError: true,
+      content: [{
+        type: 'text',
+        text: error instanceof Error ? error.message : String(error)
+      }]
+    };
+  }
 });
 
 // 启动服务器
@@ -472,7 +516,7 @@ async function main() {
 }
 
 main().catch((error) => {
-  console.error('Server error:', error);
+  console.error('[github-trending] MCP server failed to start:', error);
   process.exit(1);
 });
 

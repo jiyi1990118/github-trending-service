@@ -1,5 +1,45 @@
 import fetch from 'node-fetch';
 
+export function clampLimit(limit: number | undefined, defaultValue: number = 10, max: number = 50): number {
+  if (typeof limit !== 'number' || !Number.isFinite(limit)) return defaultValue;
+  return Math.min(Math.max(Math.floor(limit), 1), max);
+}
+
+export function githubHeaders(accept: string): Record<string, string> {
+  const headers: Record<string, string> = {
+    'Accept': accept,
+    'User-Agent': 'mcp-github-trending'
+  };
+
+  if (process.env.GITHUB_TOKEN) {
+    headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
+  }
+
+  return headers;
+}
+
+export async function ensureOk(response: { ok: boolean; status: number; statusText?: string }, context: string): Promise<void> {
+  if (!response.ok) {
+    const statusText = response.statusText ? ` ${response.statusText}` : '';
+    throw new Error(`${context}: ${response.status}${statusText}`);
+  }
+}
+
+export function validateGitHubIdentifier(value: string, fieldName: string): string {
+  if (!/^[A-Za-z0-9_.-]+$/.test(value)) {
+    throw new Error(`Invalid ${fieldName}: ${value}`);
+  }
+  return value;
+}
+
+export function encodeGitHubPath(path: string): string {
+  const parts = path.split('/');
+  if (parts.some(part => !part || part === '.' || part === '..')) {
+    throw new Error(`Invalid path: ${path}`);
+  }
+  return parts.map(encodeURIComponent).join('/');
+}
+
 interface RepoContent {
   name: string;
   path: string;
@@ -8,36 +48,49 @@ interface RepoContent {
 }
 
 export async function fetchRepoReadme(owner: string, repo: string): Promise<string> {
-  const url = `https://api.github.com/repos/${owner}/${repo}/readme`;
+  const safeOwner = validateGitHubIdentifier(owner, 'owner');
+  const safeRepo = validateGitHubIdentifier(repo, 'repo');
+  const url = `https://api.github.com/repos/${safeOwner}/${safeRepo}/readme`;
   const response = await fetch(url, {
-    headers: { 'Accept': 'application/vnd.github.raw' }
+    headers: githubHeaders('application/vnd.github.raw')
   });
-  if (!response.ok) throw new Error(`README not found: ${response.status}`);
+  await ensureOk(response, `README not found for ${owner}/${repo}`);
   return await response.text();
 }
 
 export async function fetchRepoFile(owner: string, repo: string, path: string): Promise<string> {
-  const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+  const safeOwner = validateGitHubIdentifier(owner, 'owner');
+  const safeRepo = validateGitHubIdentifier(repo, 'repo');
+  const safePath = encodeGitHubPath(path);
+  const url = `https://api.github.com/repos/${safeOwner}/${safeRepo}/contents/${safePath}`;
   const response = await fetch(url, {
-    headers: { 'Accept': 'application/vnd.github.raw' }
+    headers: githubHeaders('application/vnd.github.raw')
   });
-  if (!response.ok) throw new Error(`File not found: ${path}`);
+  await ensureOk(response, `File not found for ${owner}/${repo}:${path}`);
   return await response.text();
 }
 
 export async function fetchRepoStructure(owner: string, repo: string, path: string = ''): Promise<RepoContent[]> {
-  const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+  const safeOwner = validateGitHubIdentifier(owner, 'owner');
+  const safeRepo = validateGitHubIdentifier(repo, 'repo');
+  const safePath = path ? encodeGitHubPath(path) : '';
+  const url = `https://api.github.com/repos/${safeOwner}/${safeRepo}/contents/${safePath}`;
   const response = await fetch(url, {
-    headers: { 'Accept': 'application/json' }
+    headers: githubHeaders('application/json')
   });
-  if (!response.ok) throw new Error(`Path not found: ${path}`);
+  await ensureOk(response, `Path not found for ${owner}/${repo}:${path || '/'}`);
   return await response.json() as RepoContent[];
 }
 
 export async function fetchRepoCommits(owner: string, repo: string, limit: number = 10): Promise<any[]> {
-  const url = `https://api.github.com/repos/${owner}/${repo}/commits?per_page=${limit}`;
-  const response = await fetch(url);
-  if (!response.ok) throw new Error('Failed to fetch commits');
+  const safeOwner = validateGitHubIdentifier(owner, 'owner');
+  const safeRepo = validateGitHubIdentifier(repo, 'repo');
+  const safeLimit = clampLimit(limit);
+  const url = `https://api.github.com/repos/${safeOwner}/${safeRepo}/commits?per_page=${safeLimit}`;
+  const response = await fetch(url, {
+    headers: githubHeaders('application/json')
+  });
+  await ensureOk(response, `Failed to fetch commits for ${owner}/${repo}`);
   return (await response.json()) as any[];
 }
 
@@ -94,3 +147,5 @@ export async function analyzeRepo(owner: string, repo: string, fetchRepoDetails:
     }
   };
 }
+
+export const __test = { clampLimit, githubHeaders, ensureOk, validateGitHubIdentifier, encodeGitHubPath };
