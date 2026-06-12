@@ -185,7 +185,7 @@ async function fetchRepoDetails(owner: string, repo: string): Promise<RepoDetail
 const server = new Server(
   {
     name: 'github-trending',
-    version: '1.1.1',
+    version: '1.2.0',
   },
   {
     capabilities: {

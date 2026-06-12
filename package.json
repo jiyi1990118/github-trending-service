@@ -1,6 +1,6 @@
 {
   "name": "@npm_xiyuan/mcp-github-trending",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "MCP server for GitHub trending repositories and developers",
   "type": "module",
   "main": "dist/index.js",
